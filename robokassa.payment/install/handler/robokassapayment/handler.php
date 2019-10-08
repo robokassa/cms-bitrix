@@ -30,29 +30,59 @@ class RobokassaPaymentHandler extends PaySystem\ServiceHandler
 
 		$paymentShouldPay = (float) PriceMaths::roundPrecision($this->getBusinessValue($payment, 'PAYMENT_SHOULD_PAY'));
 
-		$receipt = \Bitrix\Main\Web\Json::encode([
-			'sno'   => $this->getBusinessValue($payment, 'SNO'),
-			'items' => \RobokassaPaymentService::formReceiptData(
-				$payment, $paymentShouldPay, $this
-			),
-		]);
+		/** @var array $signatureParams */
+		$signatureParams = [
+			$this->getBusinessValue($payment, 'SHOPLOGIN'),
+			$paymentShouldPay,
+			$this->getBusinessValue($payment, 'PAYMENT_ID'),
+		];
 
-		$signatureValue = md5(
-			$this->getBusinessValue($payment, 'SHOPLOGIN') . ":" .
-			$paymentShouldPay . ":" .
-			$this->getBusinessValue($payment, 'PAYMENT_ID') . ":" .
-			$receipt . ":" .
-			$this->getBusinessValue($payment, 'SHOPPASSWORD' . $test) . ':' .
-			'SHP_BX_PAYSYSTEM_CODE=' . $payment->getPaymentSystemId() . ':' .
-			'SHP_HANDLER=ROBOKASSA.PAYMENT'
-		);
+		if(
+			mb_strlen($this->getBusinessValue($payment, 'OUT_CURRENCY')) > 0
+			&& !(
+				$this->getBusinessValue($payment, 'COUNTRY_CODE') == "KZ"
+				&& $this->getBusinessValue($payment, 'OUT_CURRENCY') == "KZT"
+			)
+		)
+		{
+			$signatureParams[] = $this->getBusinessValue($payment, 'OUT_CURRENCY');
+		}
+
+		/** @var null|string $receipt */
+		$receipt = null;
+
+		if($this->getBusinessValue($payment, 'COUNTRY_CODE') !== "KZ")
+		{
+
+			/** @var string $receipt */
+			$receipt = \Bitrix\Main\Web\Json::encode(
+				[
+					'sno' => $this->getBusinessValue($payment, 'SNO'),
+					'items' => \RobokassaPaymentService::formReceiptData(
+						$payment,
+						$paymentShouldPay,
+						$this
+					),
+				]
+			);
+
+			$signatureParams[] = $receipt;
+		}
+
+		$signatureParams[] = $this->getBusinessValue($payment, 'SHOPPASSWORD' . $test);
+		$signatureParams[] = 'SHP_BX_PAYSYSTEM_CODE=' . $payment->getPaymentSystemId();
+		$signatureParams[] = 'SHP_HANDLER=ROBOKASSA.PAYMENT';
+
+		/** @var string $signatureValue */
+		$signatureValue = md5(implode(':', $signatureParams));
 
 		$params = array(
-			'URL'                => $this->getUrl($payment, 'pay'),
-			'SIGNATURE_VALUE'    => $signatureValue,
-			'RECEIPT'            => $receipt,
-			'BX_PAYSYSTEM_CODE'  => $payment->getPaymentSystemId(),
+			'URL' => $this->getUrl($payment, 'pay'),
+			'SIGNATURE_VALUE' => $signatureValue,
+			'RECEIPT' => $receipt,
+			'BX_PAYSYSTEM_CODE' => $payment->getPaymentSystemId(),
 			'PAYMENT_SHOULD_PAY' => $paymentShouldPay,
+			'OUT_CURRENCY' => $this->getBusinessValue($payment, 'OUT_CURRENCY'),
 		);
 
 		if ($this->getBusinessValue($payment, 'LOG_REQUESTS') == 'Y') {

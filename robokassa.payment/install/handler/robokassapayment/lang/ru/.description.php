@@ -14,7 +14,8 @@ $MESS["ROBOKASSA.OPTIONS_ORDER_NUMBER"] = "Номер заказа";
 $MESS["ROBOKASSA.MAIN_SETTINGS"] = "Общие настройки";
 $MESS["ROBOKASSA.PAYMENT_SETTINGS"] = "Оплата";
 $MESS["ROBOKASSA.LOG_REQUESTS"] = "Логирование запросов(/robokassa.log)";
-
+$MESS["ROBOKASSA.COUNTRY_CODE"] = "Страна магазина";
+$MESS["ROBOKASSA.OUT_CURRENCY"] = "Валюта счета (предаваемая в робокассу, если не рубли)";
 
 $MESS["ROBOKASSA.OPTIONS_SNO"] = "Система налогообложения";
 $MESS["ROBOKASSA.OPTION_SNO_OSN"] = "общая СН";
@@ -24,7 +25,6 @@ $MESS["ROBOKASSA.OPTION_SNO_ENVD"] = "единый налог на вмененный доход";
 $MESS["ROBOKASSA.OPTION_SNO_ESN"] = "единый сельскохозяйственный налог";
 $MESS["ROBOKASSA.OPTION_SNO_PATENT"] = "патентная СН";
 
-
 $MESS["ROBOKASSA.PAYMENT_METHOD"] = "Признак способа расчёта";
 $MESS["ROBOKASSA.OPTION_METHOD_FULL_PREPAYMENT"] = "предоплата 100%";
 $MESS["ROBOKASSA.OPTION_METHOD_PREPAYMENT"] = "предоплата";
@@ -33,7 +33,6 @@ $MESS["ROBOKASSA.OPTION_METHOD_FULL_PAYMENT"] = "полный расчёт";
 $MESS["ROBOKASSA.OPTION_METHOD_PARTIAL_PAYMENT"] = "частичный расчёт и кредит";
 $MESS["ROBOKASSA.OPTION_METHOD_CREDIT"] = "передача в кредит";
 $MESS["ROBOKASSA.OPTION_METHOD_CREDIT_PAYMENT"] = "оплата кредита";
-
 
 $MESS["ROBOKASSA.PAYMENT_OBJECT"] = "Признак предмета расчёта";
 $MESS["ROBOKASSA.PAYMENT_OBJECT_DELIVERY"] = "Признак предмета расчёта для доставки";
@@ -51,4 +50,10 @@ $MESS["ROBOKASSA.OPTION_OBJECT_AGENT_COMMISSION"] = "агентское вознаграждение";
 $MESS["ROBOKASSA.OPTION_OBJECT_COMPOSITE"] = "оставной предмет расчета";
 $MESS["ROBOKASSA.OPTION_OBJECT_ANOTHER"] = "иной предмет расчета";
 
+$MESS["ROBOKASSA.OPTION_COUNTRY_RU"] = "Россия";
+$MESS["ROBOKASSA.OPTION_COUNTRY_KZ"] = "Казахстан";
 
+$MESS["ROBOKASSA.OPTION_OUT_CURRENCY_RUB"] = "Рубль";
+$MESS["ROBOKASSA.OPTION_OUT_CURRENCY_USD"] = "Доллар";
+$MESS["ROBOKASSA.OPTION_OUT_CURRENCY_EUR"] = "Евро";
+$MESS["ROBOKASSA.OPTION_OUT_CURRENCY_KZT"] = "Тенге";

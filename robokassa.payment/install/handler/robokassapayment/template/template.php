@@ -13,6 +13,9 @@
 	<input type="hidden" name="SignatureValue" value="<?=$params['SIGNATURE_VALUE'];?>">
 	<input type="hidden" name="Email" value="<?=htmlspecialcharsbx($params['BUYER_PERSON_EMAIL'])?>">
 	<input type="hidden" name="Receipt" value="<?=htmlspecialcharsbx($params['RECEIPT'])?>">
+	<?php if(!empty($params['OUT_CURRENCY']) && strlen($params['OUT_CURRENCY']) > 0):?>
+        <input type="hidden" name="OutSumCurrency" value="<?=htmlspecialcharsbx($params['OUT_CURRENCY'])?>">
+    <?php endif;?>
 	<input type="hidden" name="SHP_HANDLER" value="ROBOKASSA.PAYMENT">
 	<input type="hidden" name="SHP_BX_PAYSYSTEM_CODE"
 		value="<?=$params['BX_PAYSYSTEM_CODE'];?>">

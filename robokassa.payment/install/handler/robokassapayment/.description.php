@@ -164,5 +164,31 @@ $data = array(
 				'TYPE' => 'Y/N'
 			)
 		),
+		'COUNTRY_CODE' => array(
+			'NAME' => Loc::getMessage('ROBOKASSA.COUNTRY_CODE'),
+			'SORT' => 1500,
+			'GROUP' => Loc::getMessage('ROBOKASSA.PAYMENT_SETTINGS'),
+			"INPUT" => array(
+				'TYPE' => 'ENUM',
+				'OPTIONS' => array(
+					'RU'  => Loc::getMessage("ROBOKASSA.OPTION_COUNTRY_RU"),
+					'KZ'  => Loc::getMessage("ROBOKASSA.OPTION_COUNTRY_KZ"),
+				)
+			)
+		),
+		'OUT_CURRENCY' => array(
+			'NAME' => Loc::getMessage('ROBOKASSA.OUT_CURRENCY'),
+			'SORT' => 1500,
+			'GROUP' => Loc::getMessage('ROBOKASSA.PAYMENT_SETTINGS'),
+			"INPUT" => array(
+				'TYPE' => 'ENUM',
+				'OPTIONS' => array(
+					''  => Loc::getMessage("ROBOKASSA.OPTION_OUT_CURRENCY_RUB"),
+					'USD'  => Loc::getMessage("ROBOKASSA.OPTION_OUT_CURRENCY_USD"),
+					'EUR'  => Loc::getMessage("ROBOKASSA.OPTION_OUT_CURRENCY_EUR"),
+					'KZT'  => Loc::getMessage("ROBOKASSA.OPTION_OUT_CURRENCY_KZT"),
+				)
+			)
+		),
 	)
 );
