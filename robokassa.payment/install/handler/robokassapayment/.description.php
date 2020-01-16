@@ -2,7 +2,7 @@
 use Bitrix\Main\Localization\Loc;
 
 Loc::loadMessages(__FILE__);
-CModule::IncludeModule("robokassa.payment");
+CModule::IncludeModule("ipol.robokassa");
 
 $data = array(
 	'NAME' => Loc::getMessage('ROBOKASSA.PAYMENT_TITLE'),

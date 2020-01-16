@@ -11,7 +11,7 @@ use Bitrix\Sale\PaySystem;
 use Bitrix\Sale\PriceMaths;
 
 Loc::loadMessages(__FILE__);
-\CModule::IncludeModule("robokassa.payment");
+\CModule::IncludeModule("ipol.robokassa");
 
 class RobokassaPaymentHandler extends PaySystem\ServiceHandler
 {
@@ -28,7 +28,7 @@ class RobokassaPaymentHandler extends PaySystem\ServiceHandler
 			$test = '_TEST';
 		}
 
-		$paymentShouldPay = (float) PriceMaths::roundPrecision($this->getBusinessValue($payment, 'PAYMENT_SHOULD_PAY'));
+		$paymentShouldPay = (float) $payment->getField('SUM') - $payment->getSumPaid();
 
 		/** @var array $signatureParams */
 		$signatureParams = [
@@ -38,7 +38,7 @@ class RobokassaPaymentHandler extends PaySystem\ServiceHandler
 		];
 
 		if(
-			mb_strlen($this->getBusinessValue($payment, 'OUT_CURRENCY')) > 0
+			$this->getBusinessValue($payment, 'OUT_CURRENCY') != ''
 			&& !(
 				$this->getBusinessValue($payment, 'COUNTRY_CODE') == "KZ"
 				&& $this->getBusinessValue($payment, 'OUT_CURRENCY') == "KZT"
@@ -161,33 +161,42 @@ class RobokassaPaymentHandler extends PaySystem\ServiceHandler
 	}
 
 
+	/**
+	 * @param Payment $payment
+	 * @return string
+	 */
 	public function getPaymentMethod(Payment $payment)
 	{
 		$paymentMethod = $this->getBusinessValue($payment, 'PAYMENT_METHOD');
-        if (!$paymentMethod) {
-            $paymentMethod = 'full_prepayment';
-        }
-        return $paymentMethod;
+		if (!$paymentMethod) {$paymentMethod = 'full_prepayment';}
+		return $paymentMethod;
 	}
 
+	/**
+	 * @param Payment $payment
+	 * @return string
+	 */
 	public function getPaymentObject(Payment $payment)
 	{
+
 		$paymentObject = $this->getBusinessValue($payment, 'PAYMENT_OBJECT');
-        if (!$paymentObject) {
-            $paymentObject = 'commodity';
-        }
-        return $paymentObject;
+
+		if (!$paymentObject) {$paymentObject = 'commodity';}
+
+		return $paymentObject;
 	}
 
+	/**
+	 * @param Payment $payment
+	 * @return string
+	 */
 	public function getPaymentObjectDelivery(Payment $payment)
 	{
-		$paymentObjectDelivery = $this->getBusinessValue($payment, 
-            'PAYMENT_OBJECT_DELIVERY'
-        );
-        if (!$paymentObjectDelivery) {
-            $paymentObjectDelivery = 'commodity';
-        }
-        return $paymentObjectDelivery;
+
+		$paymentObjectDelivery = $this->getBusinessValue($payment, 'PAYMENT_OBJECT_DELIVERY');
+		if (!$paymentObjectDelivery) {$paymentObjectDelivery = 'commodity';}
+
+		return $paymentObjectDelivery;
 	}
 
 	/**
