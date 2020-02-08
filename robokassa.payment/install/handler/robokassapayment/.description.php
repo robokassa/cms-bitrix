@@ -176,6 +176,14 @@ $data = array(
 				)
 			)
 		),
+		'IFRAME_STATUS' => array(
+			'NAME' => Loc::getMessage('ROBOKASSA.IFRAME_STATUS'),
+			'SORT' => 1500,
+			'GROUP' => Loc::getMessage('ROBOKASSA.PAYMENT_SETTINGS'),
+			"INPUT" => array(
+				'TYPE' => 'Y/N'
+			)
+		),
 		'OUT_CURRENCY' => array(
 			'NAME' => Loc::getMessage('ROBOKASSA.OUT_CURRENCY'),
 			'SORT' => 1500,

@@ -79,10 +79,11 @@ class RobokassaPaymentHandler extends PaySystem\ServiceHandler
 		$params = array(
 			'URL' => $this->getUrl($payment, 'pay'),
 			'SIGNATURE_VALUE' => $signatureValue,
-			'RECEIPT' => $receipt,
+			'RECEIPT' => urlencode($receipt),
 			'BX_PAYSYSTEM_CODE' => $payment->getPaymentSystemId(),
 			'PAYMENT_SHOULD_PAY' => $paymentShouldPay,
 			'OUT_CURRENCY' => $this->getBusinessValue($payment, 'OUT_CURRENCY'),
+			'IFRAME_STATUS' => $this->getBusinessValue($payment, 'IFRAME_STATUS') == 'Y',
 		);
 
 		if ($this->getBusinessValue($payment, 'LOG_REQUESTS') == 'Y') {

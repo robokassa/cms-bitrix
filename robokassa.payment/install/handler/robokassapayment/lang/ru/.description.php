@@ -16,6 +16,7 @@ $MESS["ROBOKASSA.PAYMENT_SETTINGS"] = "Оплата";
 $MESS["ROBOKASSA.LOG_REQUESTS"] = "Логирование запросов(/robokassa.log)";
 $MESS["ROBOKASSA.COUNTRY_CODE"] = "Страна магазина";
 $MESS["ROBOKASSA.OUT_CURRENCY"] = "Валюта счета (предаваемая в робокассу, если не рубли)";
+$MESS["ROBOKASSA.IFRAME_STATUS"] = "Включить IFRAME";
 
 $MESS["ROBOKASSA.OPTIONS_SNO"] = "Система налогообложения";
 $MESS["ROBOKASSA.OPTION_SNO_OSN"] = "общая СН";
