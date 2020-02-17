@@ -178,6 +178,7 @@ $data = array(
 		),
 		'IFRAME_STATUS' => array(
 			'NAME' => Loc::getMessage('ROBOKASSA.IFRAME_STATUS'),
+			'DESCRIPTION' => Loc::getMessage('ROBOKASSA.IFRAME_DESCRIPTION'),
 			'SORT' => 1500,
 			'GROUP' => Loc::getMessage('ROBOKASSA.PAYMENT_SETTINGS'),
 			"INPUT" => array(
