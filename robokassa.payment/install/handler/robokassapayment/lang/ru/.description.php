@@ -17,6 +17,7 @@ $MESS["ROBOKASSA.LOG_REQUESTS"] = "Логирование запросов(/robokassa.log)";
 $MESS["ROBOKASSA.COUNTRY_CODE"] = "Страна магазина";
 $MESS["ROBOKASSA.OUT_CURRENCY"] = "Валюта счета (предаваемая в робокассу, если не рубли)";
 $MESS["ROBOKASSA.IFRAME_STATUS"] = "Включить IFRAME";
+$MESS["ROBOKASSA.IFRAME_DESCRIPTION"] = "При включённом iframe, способов оплаты меньше, чем в обычной платежной странице - только карты, Apple и Samsung pay, Qiwi. incurlabel работает, но ограничено.";
 
 $MESS["ROBOKASSA.OPTIONS_SNO"] = "Система налогообложения";
 $MESS["ROBOKASSA.OPTION_SNO_OSN"] = "общая СН";
