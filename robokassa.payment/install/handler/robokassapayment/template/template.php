@@ -9,7 +9,7 @@
 	<p>
 	<input type="submit" class="btn btn-default button robokasskassa_payment_button"
 		name="Submit" value="<?=Loc::getMessage("ROBOKASSA.TEMPL_BUTTON")?>"
-		onclick="Robokassa.StartPayment({MerchantLogin: '<?=htmlspecialcharsbx($params['SHOPLOGIN']);?>', OutSum: '<?=htmlspecialcharsbx($params['PAYMENT_SHOULD_PAY']);?>', InvId: '<?=htmlspecialcharsbx($params['PAYMENT_ID']);?>', Description: '<?=htmlspecialcharsbx(Loc::getMessage("ROBOKASSA.TEMPL_ORDER_DESC").$params['ORDER_NUMBER']);?>', SignatureValue: '<?=$params['SIGNATURE_VALUE'];?>', Email: '<?=htmlspecialcharsbx($params['BUYER_PERSON_EMAIL'])?>', Receipt: '<?=$params['RECEIPT']?>', <?php if(!empty($params['OUT_CURRENCY']) && strlen($params['OUT_CURRENCY']) > 0):?> OutSumCurrency: '<?=htmlspecialcharsbx($params['OUT_CURRENCY'])?>', <?php endif;?> SHP_BX_PAYSYSTEM_CODE: '<?=$params['BX_PAYSYSTEM_CODE'];?>',  SHP_HANDLER: 'ROBOKASSA.PAYMENT'})">
+		onclick="Robokassa.StartPayment({MerchantLogin: '<?=htmlspecialcharsbx($params['SHOPLOGIN']);?>', OutSum: '<?=htmlspecialcharsbx($params['PAYMENT_SHOULD_PAY']);?>', InvId: '<?=htmlspecialcharsbx($params['PAYMENT_ID']);?>', Description: '<?=htmlspecialcharsbx(Loc::getMessage("ROBOKASSA.TEMPL_ORDER_DESC").$params['ORDER_NUMBER']);?>', SignatureValue: '<?=$params['SIGNATURE_VALUE'];?>', Email: '<?=htmlspecialcharsbx($params['BUYER_PERSON_EMAIL'])?>', Receipt: '<?=$params['RECEIPT']?>', <?php if(!empty($params['OUT_CURRENCY']) && strlen($params['OUT_CURRENCY']) > 0):?> OutSumCurrency: '<?=htmlspecialcharsbx($params['OUT_CURRENCY'])?>', <?php endif;?> SHP_BX_PAYSYSTEM_CODE: '<?=$params['BX_PAYSYSTEM_CODE'];?>',  SHP_HANDLER: 'ROBOKASSA.PAYMENT',  Shp_label: 'official_bitrix'})">
 	</p>
 <?php }else{ ?>
 <form action="<?=$params['URL']?>" method="post">
@@ -29,6 +29,7 @@
 	<input type="hidden" name="SHP_HANDLER" value="ROBOKASSA.PAYMENT">
 	<input type="hidden" name="SHP_BX_PAYSYSTEM_CODE"
 		value="<?=$params['BX_PAYSYSTEM_CODE'];?>">
+	<input type="hidden" name="Shp_label" value="official_bitrix">
 	<?if ($params['PS_IS_TEST'] == 'Y'):?>
 		<input type="hidden" name="IsTest" value="1">
 	<?endif;?>
