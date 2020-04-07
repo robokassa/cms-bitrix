@@ -72,6 +72,7 @@ class RobokassaPaymentHandler extends PaySystem\ServiceHandler
 		$signatureParams[] = $this->getBusinessValue($payment, 'SHOPPASSWORD' . $test);
 		$signatureParams[] = 'SHP_BX_PAYSYSTEM_CODE=' . $payment->getPaymentSystemId();
 		$signatureParams[] = 'SHP_HANDLER=ROBOKASSA.PAYMENT';
+		$signatureParams[] = 'Shp_label=official_bitrix';
 
 		/** @var string $signatureValue */
 		$signatureValue = md5(implode(':', $signatureParams));
