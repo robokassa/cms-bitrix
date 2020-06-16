@@ -135,7 +135,7 @@ class RobokassaPaymentHandler extends PaySystem\ServiceHandler
 			$test = '_TEST';
 		}
 
-		$hash = md5($request->get('OutSum') . ":" . $request->get('InvId') . ":" . $this->getBusinessValue($payment, 'SHOPPASSWORD2' . $test) . ':SHP_BX_PAYSYSTEM_CODE=' . $payment->getPaymentSystemId() . ':SHP_HANDLER=ROBOKASSA.PAYMENT');
+		$hash = md5($request->get('OutSum') . ":" . $request->get('InvId') . ":" . $this->getBusinessValue($payment, 'SHOPPASSWORD2' . $test) . ':SHP_BX_PAYSYSTEM_CODE=' . $payment->getPaymentSystemId() . ':SHP_HANDLER=ROBOKASSA.PAYMENT' . ':Shp_label=official_bitrix');
 
 		return ToUpper($hash) == ToUpper($request->get('SignatureValue'));
 	}
