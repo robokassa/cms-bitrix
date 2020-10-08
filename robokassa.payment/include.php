@@ -1,4 +1,7 @@
 <?php
+
+use Bitrix\Main\Config\Option;
+
 /**
  * Класс-помощник для работы с формированием запроса к робокассе
  * с поддержкой ФЗ-54
@@ -10,8 +13,10 @@ class RobokassaPaymentService {
     const VAT_10= "vat10";
     const VAT_18= "vat18";
     const VAT_20= "vat20";
+
+    const SECOND_CHECK_URL = 'https://ws.roboxchange.com/RoboFiscal/Receipt/Attach';
    
-    static $moduleId = 'robokassa.payment';
+    static $moduleId = 'ipol.robokassa';
     
     /**
      * Возвращает ID модуля
@@ -187,7 +192,7 @@ class RobokassaPaymentService {
                     $item['sum'] = number_format(
                         $roundedValue, 
                         '2', 
-                        ',', 
+                        '.', 
                         ''
                     );
                     $result[]= $item;
@@ -198,7 +203,7 @@ class RobokassaPaymentService {
                     $item['sum'] = number_format(
                         $roundedValue,
                         '2', 
-                        ',', 
+                        '.', 
                         ''
                     );
                     $roundedSum += $roundedValue; 
@@ -209,5 +214,162 @@ class RobokassaPaymentService {
             $result = $items;
         }
         return $result;
+    }
+
+	/**
+	 * Подготовка строки перед кодированием в base64
+	 * @param $string
+	 * @return string
+	 */
+    protected static function formatSignReplace($string)
+    {
+    	return \strtr(
+    		$string,
+		    [
+			    '+' => '-',
+		        '/' => '_',
+		    ]
+	    );
+    }
+
+	/**
+	 * Подготовка строки после кодирования в base64
+	 * @param $string
+	 * @return string
+	 */
+    protected static function formatSignFinish($string)
+    {
+    	return \preg_replace('/^(.*?)(=*)$/', '$1', $string);
+    }
+
+	/**
+	 * Отправка 2го чека
+	 * @param $orderId
+	 * @param $newStatus
+	 * @throws \Bitrix\Main\ArgumentNullException
+	 * @throws \Bitrix\Main\ArgumentOutOfRangeException
+	 * @throws \Bitrix\Main\LoaderException
+	 */
+    public static function sendSecondCheck($orderId, $newStatus)
+    {
+
+	    if(Option::get(self::getModuleId(), 'SECOND_CHECK_STATUS_ID', '') === $newStatus)
+	    {
+
+	    	$productProperty = Option::get(self::getModuleId(), 'SECOND_CHECK_PROPERTY_CODE', '');
+
+	    	\Bitrix\Main\Loader::includeModule('sale');
+	    	\Bitrix\Main\Loader::includeModule('iblock');
+
+	    	/** @var \Bitrix\Sale\Order $order */
+	    	$order = \Bitrix\Sale\Order::load($orderId);
+
+	    	/** @var \Bitrix\Sale\Payment $payment */
+	        foreach ($order->getPaymentCollection() as $payment)
+		    {
+
+		    	if(
+		    		$payment->getPaySystem()->getField('ACTION_FILE') === 'robokassapayment'
+				    && $payment->isPaid()
+			    )
+			    {
+
+			    	/** @var array $params */
+				    $params = $payment->getPaySystem()->getParamsBusValue($payment);
+
+				    /** @var array $fields */
+				    $fields = [
+				    	'merchantId' => $params['SHOPLOGIN'],
+					    'id' => $payment->getId() + 1,
+					    'originId' => $payment->getId(),
+					    'operation' => 'sell',
+					    'sno' => $params['SNO'],
+					    'url' => \urlencode('http://' . $_SERVER['HTTP_HOST']),
+					    'total' => $payment->getSum(),
+					    'items' => [],
+					    'client' => [
+					    	'email' => $order->getPropertyCollection()->getUserEmail()->getValue(),
+					    	'phone' => $order->getPropertyCollection()->getPhone()->getValue(),
+					    ],
+					    'payments' => [
+						    [
+						    	'type' => 2,
+							    'sum' => $payment->getSum()
+						    ]
+					    ],
+					    'vats' => []
+				    ];
+
+				    /** @var \Bitrix\Sale\BasketItem $basketItem */
+				    foreach ($order->getBasket()->getBasketItems() as $basketItem)
+				    {
+
+				    	$productTax = self::getProductTax($basketItem);
+
+					    $product = [
+						    'name' => substr(mb_convert_encoding($basketItem->getField('NAME'), 'UTF-8'), 0, 64),
+						    'quantity' => $basketItem->getQuantity(),
+						    'sum' => \Bitrix\Sale\PriceMaths::roundPrecision($basketItem->getFinalPrice()),
+						    'tax' => $productTax,
+						    'payment_method' => 'full_prepayment',
+						    'payment_object' => $params['PAYMENT_OBJECT'],
+					    ];
+
+					    if(strlen($productProperty) > 0)
+					    {
+
+					    	$element = \CIBlockElement::GetByID($basketItem->getProductId())->GetNextElement();
+					    	$property = $element->GetProperties([], ['CODE' => $productProperty]);
+
+					    	if(!empty($property['ARTNUMBER']) && \is_array($property['ARTNUMBER']) && strlen($property['ARTNUMBER']['VALUE']) > 0)
+						    	$product['nomenclature_code'] = mb_convert_encoding($property['ARTNUMBER']['VALUE'], 'UTF-8');
+					    }
+
+					    $fields['items'][] = $product;
+
+					    switch ($productTax)
+					    {
+
+						    case self::VAT_0:
+						    case self::NO_VAT:
+							    $fields['vats'][] = ['type' => $productTax, 'sum' => 0];
+						    break;
+
+						    default:
+							    $fields['vats'][] = ['type' => self::NO_VAT, 'sum' => 0];
+						    break;
+
+						    case self::VAT_10:
+						    case self::VAT_18:
+						    case self::VAT_20:
+							    $fields['vats'][] = ['type' => $productTax, 'sum' => $basketItem->getVat()];
+						    break;
+					    }
+				    }
+
+				    /** @var string $startupHash */
+				    $startupHash = self::formatSignFinish(
+				    	\base64_encode(
+				    		self::formatSignReplace(
+							    \Bitrix\Main\Web\Json::encode($fields)
+						    )
+					    )
+				    );
+
+				    /** @var string $sign */
+				    $sign = self::formatSignFinish(
+				    	\base64_encode(
+				    	    \md5(
+				    	    	$startupHash .
+						        ($params['PS_IS_TEST'] === 'Y' ? $params['SHOPPASSWORD_TEST'] : $params['SHOPPASSWORD'])
+					        )
+					    )
+				    );
+
+				    $client = new \Bitrix\Main\Web\HttpClient();
+				    $client->post(self::SECOND_CHECK_URL, $startupHash . '.' . $sign);
+			    }
+		    }
+	    }
     }
 }
