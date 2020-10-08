@@ -148,7 +148,7 @@ class RobokassaPaymentHandler extends PaySystem\ServiceHandler
 	private function checkSum(Payment $payment, Request $request)
 	{
 		$sum        = PriceMaths::roundPrecision($request->get('OutSum'));
-		$paymentSum = PriceMaths::roundPrecision($this->getBusinessValue($payment, 'PAYMENT_SHOULD_PAY'));
+		$paymentSum = (float) $payment->getField('SUM') - $payment->getSumPaid();
 
 		return $paymentSum == $sum;
 	}

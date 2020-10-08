@@ -78,6 +78,9 @@ Class ipol_robokassa extends CModule
 		$this->UnInstallDB();
 		$this->UnInstallFiles();
 
+		\Bitrix\Main\EventManager::getInstance()->unRegisterEventHandler('sale', 'OnSaleStatusOrder', $this->MODULE_ID, 'RobokassaPaymentService', 'sendSecondCheck');
+
+
 		$APPLICATION->IncludeAdminFile(
 			GetMessage("ROBOKASSA.MODULE_UNINSTALL_TITLE"),
 			$_SERVER['DOCUMENT_ROOT']."/bitrix/modules/ipol.robokassa/install/unstep.php"
